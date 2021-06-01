@@ -1,24 +1,28 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+
+import store, {reducerMap} from "./store";
 
 function App() {
+  // const [todos, setTodos] = React.useState(store.getState().todos);
+  store.subscribe(() => {
+    // setTodos(store.getState().todos)
+      console.log("-> store.getState()", store.getState());
+  })
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <button onClick={() => {
+          reducerMap.count.add(1)
+
+        //   store.dispatch({
+        //   type:'ADD_TODO',
+        //   text:'1111'
+        // })
+
+      }}>add todo</button>
+
+      <h1>todos:</h1>
+      {/*<h2>{todos}</h2>*/}
     </div>
   );
 }
