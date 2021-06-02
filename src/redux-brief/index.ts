@@ -15,12 +15,21 @@ export type HandleReducerMap<T> = {
 const NAME_SPACE_FLAG = '/';
 const ACTION_NAME = 'action';
 
-export const processReducerModules = (reducerModules:any) => {
+export const processReducerModules = <ReducerMap>(reducerModules:any) => {
+    // const reducerMap =getReducerMap<ReducerMap>(reducerModules)
+
     const obj ={} as any
     Object.keys(reducerModules).forEach(reducerName=>{
         obj[reducerName]=createModel(reducerModules[reducerName])
     })
-    return obj
+
+    const reducerMap = getReducerMap<ReducerMap>(obj);
+
+
+    return {
+        reduxBriefModules:obj,
+        reducerMap
+    }
 }
 
 const getActionMap = (reducerModule: { [x: string]: any }, namespace: string) =>
