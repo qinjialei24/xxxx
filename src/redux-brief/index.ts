@@ -62,7 +62,7 @@ export const createModel = (model: any) => {
     return reducerModule;
 };
 
-export const setActionToStore = (
+export const run = (
     store: { [x: string]: any },
     reducerModules: { [x: string]: { [x: string]: any } }
 ) => {
@@ -80,15 +80,15 @@ export const getReducerMap = <ReducerMap>(betterReduxModules: any): HandleReduce
     return obj as HandleReducerMap<ReducerMap>;
 };
 
-export const storeEnhancer = (createStore: (arg0: any, arg1: any, arg2: any) => any) => (
-    reducer: any,
-    preloadedState: any,
-    enhancer: any
-) => {
-    const store = createStore(reducer, preloadedState, enhancer);
-    const oldDispatch = store.dispatch;
-    store.dispatch = (typeOrAction: any, payload: any) =>
-        typeof typeOrAction === 'object' ? oldDispatch(typeOrAction) : oldDispatch({type: typeOrAction, payload});
-    return store;
-};
+// export const storeEnhancer = (createStore: (arg0: any, arg1: any, arg2: any) => any) => (
+//     reducer: any,
+//     preloadedState: any,
+//     enhancer: any
+// ) => {
+//     const store = createStore(reducer, preloadedState, enhancer);
+//     const oldDispatch = store.dispatch;
+//     store.dispatch = (typeOrAction: any, payload: any) =>
+//         typeof typeOrAction === 'object' ? oldDispatch(typeOrAction) : oldDispatch({type: typeOrAction, payload});
+//     return store;
+// };
 
