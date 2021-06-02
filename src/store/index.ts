@@ -20,6 +20,7 @@ const rootReducer =combineReducers({
 })
 
 const store= createStore(rootReducer)
+
 setActionToStore(store, reduxBriefModules);
 
 export {
