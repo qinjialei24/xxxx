@@ -1,6 +1,7 @@
 import React from 'react';
 import {useDispatch, useSelector} from 'react-redux'
 import {reducerMap} from "./store";
+import {UserInfo} from "./components/userInfo";
 
 function App() {
     const todos = useSelector((state: any) => {
@@ -22,7 +23,6 @@ function App() {
                 <h1>money:{money}</h1>
 
                 <button onClick={() => {
-                    reducerMap.count.add1(12)
                 }}>
                     加钱1
                 </button>
@@ -52,6 +52,7 @@ function App() {
 
     return (
         <div className="App">
+            <UserInfo/>
             {renderCount()}
             {renderTodos()}
         </div>

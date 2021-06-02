@@ -1,5 +1,5 @@
 export interface ChildModule {
-    namespace: 'count'
+    namespace: string
     state: {
         money1: number
     }
@@ -11,7 +11,7 @@ export interface ChildModule {
 
 
 const childModule: ChildModule = {
-    namespace: 'count',
+    namespace: 'child',
     state: {
         money1: 100
     },

@@ -1,8 +1,10 @@
 import produce from 'immer';
 
-let _store:any={}
+let _store: any = {}
+let _actionMap: any = {}
 
 type GetFirstArgFn<F> = F extends (a: infer A1, ...args: infer U) => void ? (a: A1) => void : unknown;
+
 
 type GetFirstArgOfObj<T> = {
     [P in keyof T]: GetFirstArgFn<T[P]>;
@@ -12,9 +14,16 @@ export type HandleReducerMap<T> = {
     [P in keyof T]: GetFirstArgOfObj<T[P]>;
 };
 
+export interface ReducerModule {
+    namespace: string
+    state: Record<string, any>
+    reducer: Record<string, (payload: any, state: any) => void>
+}
+
 
 const NAME_SPACE_FLAG = '/';
-const ACTION_NAME = 'action';
+const REDUCER_KEY = 'reducer';
+const ACTION_KEY = 'action';
 
 export const processReducerModules = <ReducerMap>(reducerModules: any) => {
 
@@ -32,17 +41,28 @@ export const processReducerModules = <ReducerMap>(reducerModules: any) => {
 
 const getActionMap = (reducerModule: { [x: string]: any }, namespace: string) =>
     Object.keys(reducerModule).reduce((actionMap, actionName) => {
-        const actionType = namespace + NAME_SPACE_FLAG + actionName;
+        const actionNameWithNamespace = namespace + NAME_SPACE_FLAG + actionName;
+        generateActionMap(namespace,actionName,actionNameWithNamespace)
         return {
             ...actionMap,
             [actionName]: (payload: any) => {
                 _store.dispatch({
-                    type: actionType,
+                    type: actionNameWithNamespace,
                     payload,
                 } as never);
             },
         };
     }, {});
+
+const generateActionMap = (moduleName: string, actionName: string,actionNameWithNamespace: string) => {
+    //todo 检查是否重复
+    _actionMap[moduleName] = {
+        ..._actionMap[moduleName],
+        [actionName]:actionNameWithNamespace
+    }
+    console.log("-> _actionMap", _actionMap);
+
+}
 
 const getKey = (str: string) => str.substring(str.indexOf(NAME_SPACE_FLAG) + 1, str.length + 1);
 
@@ -58,7 +78,7 @@ export const createModel = (model: any) => {
     const {reducer, namespace} = model;
     const reducerModule = (state = model.state, action: any) => withReducerModule({state, action, reducer, namespace});
     // @ts-ignore
-    reducerModule[ACTION_NAME] = getActionMap(reducer, namespace);
+    reducerModule[REDUCER_KEY] = getActionMap(reducer, namespace);
     return reducerModule;
 };
 
@@ -66,16 +86,16 @@ export const run = (
     store: { [x: string]: any },
     reducerModules: { [x: string]: { [x: string]: any } }
 ) => {
-    _store =store
+    _store = store
     Object.keys(reducerModules).forEach((moduleName) => {
-        _store[moduleName] = reducerModules[moduleName][ACTION_NAME];
+        _store[moduleName] = reducerModules[moduleName][REDUCER_KEY];
     });
 };
 
 export const getReducerMap = <ReducerMap>(betterReduxModules: any): HandleReducerMap<ReducerMap> => {
     const obj = {} as any;
     Object.keys(betterReduxModules).forEach((moduleName) => {
-        obj[moduleName] = betterReduxModules[moduleName][ACTION_NAME];
+        obj[moduleName] = betterReduxModules[moduleName][REDUCER_KEY];
     });
     return obj as HandleReducerMap<ReducerMap>;
 };
