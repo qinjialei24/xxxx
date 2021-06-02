@@ -1,10 +1,14 @@
 import  {CountModule} from './modules/count'
 import countModel from "./modules/count";
-import {HandleActionMap, processReducerModules, run} from "../redux-brief";
-import {combineReducers, createStore} from "redux";
+import { processReducerModules, run} from "../redux-brief";
+import {combineReducers,applyMiddleware, createStore} from "redux";
+import createSagaMiddleware from 'redux-saga'
+
 import todos from "../reducers/todo";
 import user, {User} from "./modules/user";
 import { composeWithDevTools } from 'redux-devtools-extension';
+import mySaga from "./saga";
+const sagaMiddleware = createSagaMiddleware()
 
 interface ReduxBriefReducers {
     count:CountModule['reducer']
@@ -22,7 +26,11 @@ const rootReducer =combineReducers({
     ...reduxBriefModules
 })
 
-const store= createStore(rootReducer,composeWithDevTools())
+const store= createStore(rootReducer,composeWithDevTools(
+    applyMiddleware(sagaMiddleware)
+))
+
+sagaMiddleware.run(mySaga)
 
 run(store, reduxBriefModules);
 

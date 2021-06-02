@@ -1,4 +1,4 @@
-import {reducerMap} from "../index";
+import { reducerMap} from "../index";
 
 export interface CountModule {
     namespace: 'count'
@@ -19,9 +19,6 @@ const countModule: CountModule= {
     },
     reducer: {
         add(payload, state) {
-            console.log("-> payload", payload);
-            // reducerMap.user.setUserName('111')
-            console.log("-> reducerMap", reducerMap.user);
             state.money += payload
         },
         add2(payload, state) {
