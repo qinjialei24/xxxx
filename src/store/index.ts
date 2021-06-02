@@ -1,6 +1,7 @@
-import { run } from "redux-brief";
-import { createStore,combineReducers } from 'redux'
-import count, {CountModule} from './modules/count'
+import  {CountModule} from './modules/count'
+import countModel from "./modules/count";
+import {getReducerMap, setActionToStore} from "../redux-brief";
+import {combineReducers, createStore} from "redux";
 import todos from "../reducers/todo";
 
 interface ReduxBriefReducers {
@@ -8,18 +9,18 @@ interface ReduxBriefReducers {
 }
 
 const reduxBriefModules ={
-    count
-} as any;
-
-const rootReducer = combineReducers({
+    count:countModel
+};
+const rootReducer =combineReducers({
     todos,
     ...reduxBriefModules
 })
+const reducerMap = getReducerMap<ReduxBriefReducers>(reduxBriefModules);
+const store= createStore(rootReducer)
+setActionToStore(store, reduxBriefModules);
 
-
-const store =createStore(rootReducer)
-
-export const reducerMap =run<ReduxBriefReducers>(reduxBriefModules,store)
-
-
-export default store
+export {
+    store,
+    reduxBriefModules,
+    reducerMap
+}

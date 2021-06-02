@@ -1,4 +1,5 @@
 import childModule, {ChildModule} from "./child1";
+import {createModel} from "../../redux-brief";
 
 export interface CountModule{
     namespace:'count'
@@ -31,5 +32,6 @@ export interface CountModule{
     }
 }
 
+const countModel = createModel(countModule);
 
-export default countModule
+export default countModel
