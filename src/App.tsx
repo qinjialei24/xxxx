@@ -15,7 +15,7 @@ function App() {
         return (
             <div>
                 <button onClick={() => {
-                    reducerMap.count.add(1)
+                    reducerMap.count.add(12)
                 }}>加钱
                 </button>
                 <h1>money:{money}</h1>

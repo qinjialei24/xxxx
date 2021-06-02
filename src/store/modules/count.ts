@@ -16,7 +16,7 @@ export interface CountModule{
   const countModule:CountModule & ChildModule = {
     namespace:'count',
     state:{
-        money:0,
+        money:10,
         ...childModule.state
     },
     reducer:{
@@ -32,6 +32,6 @@ export interface CountModule{
     }
 }
 
-const countModel = createModel(countModule);
+// const countModel = createModel(countModule);
 
-export default countModel
+export default countModule

@@ -1,8 +1,27 @@
 import produce from 'immer';
 import {store} from "../store";
 
+type GetFirstArgFn<F> = F extends (a: infer A1, ...args: infer U) => void ? (a: A1) => void : unknown;
+
+type GetFirstArgOfObj<T> = {
+    [P in keyof T]: GetFirstArgFn<T[P]>;
+};
+
+export type HandleReducerMap<T> = {
+    [P in keyof T]: GetFirstArgOfObj<T[P]>;
+};
+
+
 const NAME_SPACE_FLAG = '/';
 const ACTION_NAME = 'action';
+
+export const processReducerModules = (reducerModules:any) => {
+    const obj ={} as any
+    Object.keys(reducerModules).forEach(reducerName=>{
+        obj[reducerName]=createModel(reducerModules[reducerName])
+    })
+    return obj
+}
 
 const getActionMap = (reducerModule: { [x: string]: any }, namespace: string) =>
     Object.keys(reducerModule).reduce((actionMap, actionName) => {
@@ -65,12 +84,3 @@ export const storeEnhancer = (createStore: (arg0: any, arg1: any, arg2: any) => 
     return store;
 };
 
-type GetFirstArgFn<F> = F extends (a: infer A1, ...args: infer U) => void ? (a: A1) => void : unknown;
-
-type GetFirstArgOfObj<T> = {
-    [P in keyof T]: GetFirstArgFn<T[P]>;
-};
-
-export type HandleReducerMap<T> = {
-    [P in keyof T]: GetFirstArgOfObj<T[P]>;
-};
