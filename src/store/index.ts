@@ -1,6 +1,6 @@
 import  {CountModule} from './modules/count'
 import countModel from "./modules/count";
-import { processReducerModules, run} from "../redux-brief";
+import {HandleActionMap, processReducerModules, run} from "../redux-brief";
 import {combineReducers, createStore} from "redux";
 import todos from "../reducers/todo";
 import user, {User} from "./modules/user";
@@ -11,11 +11,11 @@ interface ReduxBriefReducers {
     user:User['reducer']
 }
 
-const {reduxBriefModules,reducerMap} = processReducerModules<ReduxBriefReducers>({
+
+const {reduxBriefModules,reducerMap,actionMap} = processReducerModules<ReduxBriefReducers>({
     count:countModel,
     user
 })
-
 
 const rootReducer =combineReducers({
     todos,
@@ -29,5 +29,6 @@ run(store, reduxBriefModules);
 export {
     store,
     reduxBriefModules,
-    reducerMap
+    reducerMap,
+    actionMap
 }

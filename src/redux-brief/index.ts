@@ -14,6 +14,14 @@ export type HandleReducerMap<T> = {
     [P in keyof T]: GetFirstArgOfObj<T[P]>;
 };
 
+
+export type HandleActionMap<T> = {
+    [P in keyof T]: {
+        [P2 in keyof T[P]]: string
+    }
+}
+
+
 export interface ReducerModule {
     namespace: string
     state: Record<string, any>
@@ -23,7 +31,6 @@ export interface ReducerModule {
 
 const NAME_SPACE_FLAG = '/';
 const REDUCER_KEY = 'reducer';
-const ACTION_KEY = 'action';
 
 export const processReducerModules = <ReducerMap>(reducerModules: any) => {
 
@@ -35,14 +42,15 @@ export const processReducerModules = <ReducerMap>(reducerModules: any) => {
 
     return {
         reduxBriefModules: obj,
-        reducerMap
+        reducerMap,
+        actionMap:_actionMap as HandleActionMap<ReducerMap>
     }
 }
 
 const getActionMap = (reducerModule: { [x: string]: any }, namespace: string) =>
     Object.keys(reducerModule).reduce((actionMap, actionName) => {
         const actionNameWithNamespace = namespace + NAME_SPACE_FLAG + actionName;
-        generateActionMap(namespace,actionName,actionNameWithNamespace)
+        generateActionMap(namespace, actionName, actionNameWithNamespace)
         return {
             ...actionMap,
             [actionName]: (payload: any) => {
@@ -54,11 +62,11 @@ const getActionMap = (reducerModule: { [x: string]: any }, namespace: string) =>
         };
     }, {});
 
-const generateActionMap = (moduleName: string, actionName: string,actionNameWithNamespace: string) => {
+const generateActionMap = (moduleName: string, actionName: string, actionNameWithNamespace: string) => {
     //todo 检查是否重复
     _actionMap[moduleName] = {
         ..._actionMap[moduleName],
-        [actionName]:actionNameWithNamespace
+        [actionName]: actionNameWithNamespace
     }
     console.log("-> _actionMap", _actionMap);
 
