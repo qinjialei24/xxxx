@@ -8,6 +8,7 @@ function App() {
     });
 
     const money = useSelector((state: any) => state.count.money)
+    const money1 = useSelector((state: any) => state.count.money1)
 
     const dispatch = useDispatch()
 
@@ -19,6 +20,13 @@ function App() {
                 }}>加钱
                 </button>
                 <h1>money:{money}</h1>
+
+                <button onClick={() => {
+                    reducerMap.count.add1(12)
+                }}>
+                    加钱1
+                </button>
+                <h1>money1:{money1}</h1>
             </div>
         )
     }
