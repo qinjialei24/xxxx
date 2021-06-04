@@ -1,6 +1,6 @@
 import React from 'react';
 import {useDispatch, useSelector} from 'react-redux'
-import {actionMap} from "./store";
+import { reducerMap } from "./store";
 import {UserInfo} from "./components/userInfo";
 
 function App() {
@@ -17,11 +17,7 @@ function App() {
         return (
             <div style={{border:'1px solid',padding:'10px'}}>
                 <button onClick={() => {
-                    dispatch({
-                        type:actionMap.count.add,
-                        payload:1
-                    })
-                    // reducerMap.count.add(12)
+                    reducerMap.count.add(12)
                 }}>加钱
                 </button>
                 <h1>money:{money}</h1>

@@ -1,5 +1,3 @@
-import { reducerMap} from "../index";
-
 export interface CountModule {
     namespace: 'count'
     state: {
@@ -22,9 +20,6 @@ const countModule: CountModule= {
             state.money += payload
         },
         add2(payload, state) {
-            console.log("-> payload", payload);
-            // reducerMap.user.setUserName('111')
-            console.log("-> reducerMap", reducerMap.user);
             state.money += payload
         },
         minus(payload, state) {

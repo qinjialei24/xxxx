@@ -1,4 +1,4 @@
-import {call, put, takeLatest} from 'redux-saga/effects'
+import {call, put, takeEvery, takeLatest} from 'redux-saga/effects'
 import {actionMap} from "./index";
 
 function fetchUserApi(): Promise<number> {
@@ -19,7 +19,7 @@ function* fetchUser() {
 
 
 function* mySaga() {
-    yield takeLatest(actionMap.count.add, fetchUser);
+    yield takeEvery(actionMap.count.add, fetchUser);
 }
 
 export default mySaga;

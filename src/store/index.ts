@@ -15,7 +15,6 @@ interface ReduxBriefReducers {
     user:User['reducer']
 }
 
-
 const {reduxBriefModules,reducerMap,actionMap} = processReducerModules<ReduxBriefReducers>({
     count:countModel,
     user
