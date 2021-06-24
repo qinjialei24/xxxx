@@ -1,6 +1,6 @@
 import {useSelector} from "react-redux";
 import {User} from "../store/modules/user";
-import {reducerMap} from "../store";
+import {reducers} from "../store";
 
 
 export function UserInfo(){
@@ -8,7 +8,7 @@ export function UserInfo(){
     return(
         <div>
             <button onClick={() => {
-                reducerMap.user.setUserName('老王')
+                reducers.user.setUserName('老王')
             }}>设置username 为 老王</button>
             <h1>userName:{user.name}</h1>
             <h1>age:{user.age}</h1>

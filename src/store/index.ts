@@ -1,36 +1,29 @@
-import  {CountModule} from './modules/count'
-import countModel from "./modules/count";
-import { processReducerModules, run} from "redux-brief";
-import {combineReducers,applyMiddleware, createStore} from "redux";
-import createSagaMiddleware from 'redux-saga'
+import {countModule,CountModule} from "./modules/count";
+import { processReducerModules, run,combineReducers,createStore,composeWithDevTools } from "redux-brief";
 
-import user, {User} from "./modules/user";
-import { composeWithDevTools } from 'redux-devtools-extension';
-const sagaMiddleware = createSagaMiddleware()
+import  {userModule,User} from "./modules/user";
 
 interface ReduxBriefReducers {
     count:CountModule['reducer']
     user:User['reducer']
 }
 
-const {reduxBriefModules,reducerMap,actionMap} = processReducerModules<ReduxBriefReducers>({
-    count:countModel,
-    user
+const {reduxBriefModules,reducers,actionMap} = processReducerModules<ReduxBriefReducers>({
+    count:countModule,
+    user:userModule
 })
 
 const rootReducer =combineReducers({
     ...reduxBriefModules
 })
 
-const store= createStore(rootReducer,composeWithDevTools(
-    applyMiddleware(sagaMiddleware)
-))
+const store= createStore(rootReducer,composeWithDevTools())
 
 run(store, reduxBriefModules);
 
 export {
     store,
     reduxBriefModules,
-    reducerMap,
+    reducers,
     actionMap
 }

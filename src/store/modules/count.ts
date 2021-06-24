@@ -10,7 +10,7 @@ export interface CountModule {
     }
 }
 
-const countModule: CountModule= {
+export const countModule: CountModule= {
     namespace: 'count',
     state: {
         money: 10,
@@ -28,4 +28,3 @@ const countModule: CountModule= {
     }
 }
 
-export default countModule

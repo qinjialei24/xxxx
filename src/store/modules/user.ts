@@ -14,7 +14,7 @@ export interface User {
     }
 }
 
-const user: User = {
+export const userModule: User = {
     namespace: 'user',
     state: {
         name: '',
@@ -36,4 +36,3 @@ const user: User = {
 
 }
 
-export default user
