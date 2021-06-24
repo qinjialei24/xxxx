@@ -1,9 +1,21 @@
 import React from 'react';
-import { useSelector} from 'react-redux'
-import { reducers } from "./store";
+import { useSelector} from 'redux-brief'
+import {reducers, store} from "./store";
 
 function App() {
     const money = useSelector((state: any) => state.count.money)
+
+    function minusAsync() {
+        return (dispatch) => {
+            console.log("-> dispatch", dispatch);
+            setTimeout(() => {
+                // Yay! Can invoke sync or async actions with `dispatch`
+                dispatch({
+                    type:'count/minus'
+                });
+            }, 1000);
+        };
+    }
 
     const renderCount = () => {
         return (
@@ -15,7 +27,7 @@ function App() {
                 </button>
                 <h1>money:{money}</h1>
                 <button onClick={() => {
-                    reducers.count.minus(1)
+                    store.dispatch(minusAsync() as any)
                 }}>
                     减
                 </button>

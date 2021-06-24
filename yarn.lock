@@ -9256,10 +9256,13 @@ redent@^3.0.0:
     indent-string "^4.0.0"
     strip-indent "^3.0.0"
 
-redux-brief@^0.2.8:
-  version "0.2.8"
-  resolved "https://registry.npmjs.org/redux-brief/-/redux-brief-0.2.8.tgz#f150dc994d2bde3725b2a06df3ce68e8b54f36e2"
-  integrity sha512-vkyNA04yprqN6qMiD9uqLcaTn00UfFrKOlj5Iay65Rn6gi9vtPuAM7vq5nVFBd+lX5Iwyjn8WvIzQvbKwZphbg==
+redux-brief@^0.3.2:
+  version "0.3.2"
+  resolved "https://registry.npmjs.org/redux-brief/-/redux-brief-0.3.2.tgz#2a3d1827f80490a23377ea18c4ecadd47532eb9e"
+  integrity sha512-/1434a1DmJI1yHCDEXsLJOYVkfP55FZw+be5wir82vv+HkAeXXOycZ0UOn5Ud3dAuuhvrST8F7Ev1W+Xk4qrcA==
+  dependencies:
+    react-redux "^7.2.4"
+    redux "^4.1.0"
 
 redux-devtools-extension@^2.13.9:
   version "2.13.9"
@@ -9272,6 +9275,11 @@ redux-saga@^1.1.3:
   integrity sha512-RkSn/z0mwaSa5/xH/hQLo8gNf4tlvT18qXDNvedihLcfzh+jMchDgaariQoehCpgRltEm4zHKJyINEz6aqswTw==
   dependencies:
     "@redux-saga/core" "^1.1.3"
+
+redux-thunk@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.npmjs.org/redux-thunk/-/redux-thunk-2.3.0.tgz#51c2c19a185ed5187aaa9a2d08b666d0d6467622"
+  integrity sha512-km6dclyFnmcvxhAcrQV2AkZmPQjzPDjgVlQtR0EQjxZPyJ0BnMf3in1ryuR8A2qU0HldVRfxYXbFSKlI3N7Slw==
 
 redux@^4.0.0, redux@^4.0.4, redux@^4.1.0:
   version "4.1.0"
