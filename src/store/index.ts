@@ -1,29 +1,19 @@
 import {countModule,CountModule} from "./modules/count";
-import { processReducerModules, run,combineReducers,createStore,composeWithDevTools } from "redux-brief";
-
-import  {userModule,User} from "./modules/user";
+import {run} from "redux-brief";
 
 interface ReduxBriefReducers {
     count:CountModule['reducer']
-    user:User['reducer']
 }
 
-const {reduxBriefModules,reducers,actionMap} = processReducerModules<ReduxBriefReducers>({
-    count:countModule,
-    user:userModule
+const {store,reducers} = run<ReduxBriefReducers>({
+    modules:{
+        count:countModule,
+    },
+    middlewares:[]//例如 middlewares:[thunk，saga]，默认集成 redux-devtools-extension
 })
-
-const rootReducer =combineReducers({
-    ...reduxBriefModules
-})
-
-const store= createStore(rootReducer,composeWithDevTools())
-
-run(store, reduxBriefModules);
 
 export {
     store,
-    reduxBriefModules,
     reducers,
-    actionMap
 }
+
