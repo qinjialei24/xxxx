@@ -5725,10 +5725,10 @@ immer@8.0.1:
   resolved "https://registry.nlark.com/immer/download/immer-8.0.1.tgz#9c73db683e2b3975c424fb0572af5889877ae656"
   integrity sha1-nHPbaD4rOXXEJPsFcq9YiYd65lY=
 
-immer@^9.0.2:
-  version "9.0.2"
-  resolved "https://registry.npmjs.org/immer/-/immer-9.0.2.tgz#83e4593df9914acaecfd9fac6a8601ef44d883fc"
-  integrity sha512-mkcmzLtIfSp40vAqteRr1MbWNSoI7JE+/PB36FNPoSfJ9RQRmNKuTYCjKkyXyuq3Dgn07HuJBrwJd4ZSk2yUbw==
+immer@^9.0.3:
+  version "9.0.3"
+  resolved "https://registry.npmjs.org/immer/-/immer-9.0.3.tgz#146e2ba8b84d4b1b15378143c2345559915097f4"
+  integrity sha512-mONgeNSMuyjIe0lkQPa9YhdmTv8P19IeHV0biYhcXhbd5dhdB9HSK93zBpyKjp6wersSUgT5QyU0skmejUVP2A==
 
 import-cwd@^2.0.0:
   version "2.1.0"
@@ -9256,12 +9256,10 @@ redent@^3.0.0:
     indent-string "^4.0.0"
     strip-indent "^3.0.0"
 
-redux-brief@^0.2.1:
-  version "0.2.1"
-  resolved "https://registry.npmjs.org/redux-brief/-/redux-brief-0.2.1.tgz#0a4c54168db0ef08658749a031ad93ff093a2bd1"
-  integrity sha512-2fgtZfizrzz/ePJLE3lUz/UdjwRDEbNEm074+Whc7ucn5N4i+jEZgsiWNI5f9jiMq5WGCRWMoNFmxlwsI8Nczg==
-  dependencies:
-    immer "^9.0.2"
+redux-brief@^0.2.8:
+  version "0.2.8"
+  resolved "https://registry.npmjs.org/redux-brief/-/redux-brief-0.2.8.tgz#f150dc994d2bde3725b2a06df3ce68e8b54f36e2"
+  integrity sha512-vkyNA04yprqN6qMiD9uqLcaTn00UfFrKOlj5Iay65Rn6gi9vtPuAM7vq5nVFBd+lX5Iwyjn8WvIzQvbKwZphbg==
 
 redux-devtools-extension@^2.13.9:
   version "2.13.9"
