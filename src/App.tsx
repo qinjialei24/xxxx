@@ -21,7 +21,7 @@ function App() {
         return (
             <div style={{border:'1px solid',padding:'10px'}}>
                 <button onClick={() => {
-                    reducers.count.add(1)
+                    reducers.count.add2('')
                 }}>
                     加
                 </button>

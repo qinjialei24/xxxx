@@ -1,9 +1,9 @@
-import {countModule,CountModule} from "./modules/count";
+import {countModule} from "./modules/count";
 import {run} from "redux-brief";
 import thunk from 'redux-thunk'
 
 interface ReduxBriefReducers {
-    count:CountModule['reducer']
+    count:typeof countModule
 }
 
 const {store,reducers} = run<ReduxBriefReducers>({

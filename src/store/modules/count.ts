@@ -1,26 +1,23 @@
-export interface CountModule {
-    namespace: 'count'
-    state: {
-        money: number
-    }
-    reducer: {
-        add: (payload: number, state: CountModule['state']) => void
-        minus: (payload: number, state: CountModule['state']) => void
-    }
-}
+import {createModule} from "redux-brief";
 
-export const countModule: CountModule= {
-    namespace: 'count',
+export const countModule = createModule({
+    namespace:'1',
     state: {
-        money: 10,
-    },
-    reducer: {
-        add(payload, state) {
-            state.money += payload
+            money: 10,
+            count: 10,
+            count2: '',
         },
-        minus(payload, state) {
-            state.money -= 1
-        },
+      reducer: {
+            add(payload:number, state) {
+                state.money += payload
+            },
+            add2(payload:string, state) {
+                state.count2 += payload
+            },
+            minus(payload:number, state) {
+                state.money -= 1
+            },
+        }
     }
-}
+)
 
