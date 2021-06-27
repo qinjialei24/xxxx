@@ -1,15 +1,15 @@
 import React from 'react';
 import { useSelector} from 'redux-brief'
-import {reducers, store} from "./store";
+import {AppState, reducers, store} from "./store";
 
 function App() {
-    const money = useSelector((state: any) => state.count.money)
+    const money = useSelector((state: AppState) => state.count.money)
+    const name = useSelector((state: AppState) => state.user.name)
 
     function minusAsync() {
         return (dispatch) => {
             console.log("-> dispatch", dispatch);
             setTimeout(() => {
-                // Yay! Can invoke sync or async actions with `dispatch`
                 dispatch({
                     type:'count/minus'
                 });
@@ -21,11 +21,13 @@ function App() {
         return (
             <div style={{border:'1px solid',padding:'10px'}}>
                 <button onClick={() => {
-                    reducers.count.add2('')
+                    reducers.count.add(1)
+                    reducers.user.setUserName('kobe bryant')
                 }}>
                     加
                 </button>
                 <h1>money:{money}</h1>
+                <h1>name:{name}</h1>
                 <button onClick={() => {
                     store.dispatch(minusAsync() as any)
                 }}>
