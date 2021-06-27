@@ -8,7 +8,6 @@ function App() {
 
     function minusAsync() {
         return (dispatch) => {
-            console.log("-> dispatch", dispatch);
             setTimeout(() => {
                 dispatch({
                     type:'count/minus'
