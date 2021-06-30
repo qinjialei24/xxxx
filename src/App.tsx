@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector} from 'redux-brief'
-import {AppState, reducers, store} from "./store";
+import {actions, AppState, reducers, store} from "./store";
 
 function App() {
     const money = useSelector((state: AppState) => state.count.money)
@@ -10,7 +10,7 @@ function App() {
         return (dispatch) => {
             setTimeout(() => {
                 dispatch({
-                    type:'count/minus'
+                    type:actions.count.minus
                 });
             }, 1000);
         };
@@ -26,12 +26,12 @@ function App() {
                     加
                 </button>
                 <h1>money:{money}</h1>
-                <h1>name:{name}</h1>
                 <button onClick={() => {
                     store.dispatch(minusAsync() as any)
                 }}>
-                    减
+                    异步减
                 </button>
+                <h1>name:{name}</h1>
             </div>
         )
     }

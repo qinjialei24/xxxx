@@ -9,7 +9,7 @@ interface Modules {
     user:typeof userModule
 }
 
-const {store,reducers} = run<Modules>({
+const {store,reducers,actions} = run<Modules>({
     modules:{
         count:countModule,
         user:userModule,
@@ -20,6 +20,6 @@ const {store,reducers} = run<Modules>({
 export {
     store,
     reducers,
+    actions,
 }
-
 export type AppState =UserModuleState & CountModuleState
