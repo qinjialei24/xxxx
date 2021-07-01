@@ -19,9 +19,17 @@ export const countModule = createModule({
                 state.count2 += payload
             },
             minus(payload: number, state) {
-                state.money -= 1
+                state.money -= payload
             },
-        }
+        },
+     selector:{}
+        // effects:{
+        //    add(reducer){
+        //        setTimeout(() => {
+        //            reducer.add(1)
+        //        },1000)
+        //    }
+        // }
     }
 )
 

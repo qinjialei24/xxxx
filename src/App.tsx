@@ -10,7 +10,8 @@ function App() {
         return (dispatch) => {
             setTimeout(() => {
                 dispatch({
-                    type:actions.count.minus
+                    type:actions.count.minus,
+                    payload:10
                 });
             }, 1000);
         };

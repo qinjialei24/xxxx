@@ -8,8 +8,11 @@ const state = {
 
 export const userModule = createModule(
     {
-        namespace,
-        state,
+        namespace:'user',
+        state: {
+            name: '',
+            age: 0
+        },
         reducer: {
             setUserName(name:string, state) {
                 state.name = name
