@@ -23,6 +23,7 @@ function App() {
                 <button onClick={() => {
                     reducers.count.add(1)
                     reducers.user.setUserName('kobe bryant')
+                    reducers.user.setInfo({age:1,address:''})
                 }}>
                     加
                 </button>
