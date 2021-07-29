@@ -116,14 +116,7 @@ function getActionMap(reducerModule: ModuleConfig, namespace: string) {
     }, {});
 }
 
-export function mountModules(store: any, reducerModules: any) {
-    _store = store;
-    Object.keys(reducerModules).forEach((moduleName) => {
-        _store[moduleName] = reducerModules[moduleName][REDUCER_KEY];
-    });
-    console.log("-> _store", _store);
 
-}
 
 //generate all reducers and save in a map ，so you can call reducer like reducers.countModule.add()
 function generateReducers<Reducers>(reducersToCombine: any): HandleReducers<Reducers> {
@@ -166,17 +159,24 @@ function processRootModule<Reducers>(rootModules: Record<string, any>) {
     return {
         reducers,
         rootReducer,
-        processedRootModule
+        // processedRootModule
     };
 
 }
 
+export function mountModules(store: any, processedRootModule: any) {
+    _store = store;
+    Object.keys(processedRootModule).forEach((moduleName) => {
+        _store[moduleName] = processedRootModule[moduleName][REDUCER_KEY];
+    });
+}
+
 export function run<T>(options: RunParams<T>): RunResult<T> {
     const { modules, middlewares = [] } = options;
-    const { rootReducer, reducers,processedRootModule } = processRootModule<T>(modules);
-    console.log("-> processedRootModule", processedRootModule);
+    const { rootReducer, reducers } = processRootModule<T>(modules);
     const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(...middlewares))) as Store; // todo 环境变量,生产环境不打包 dev tools
-    mountModules(store, processedRootModule);
+    _store = store;
+    // mountModules(store, processedRootModule);
     return {
         store,
         selectors,
