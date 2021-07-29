@@ -1,8 +1,8 @@
 import {countModule, CountModuleState} from "./modules/count";
 import {userModule, UserModuleState} from "./modules/user";
 
-import {run} from "redux-brief";
 import thunk from 'redux-thunk'
+import {run} from "../redux-brief";
 
 interface Modules {
     count:typeof countModule

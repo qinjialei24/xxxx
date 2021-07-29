@@ -1,4 +1,4 @@
-import {createModule} from 'redux-brief'
+import {createModule} from "../../redux-brief";
 
 interface Info {
     address:string

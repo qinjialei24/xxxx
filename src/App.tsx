@@ -1,6 +1,6 @@
 import React from 'react';
-import { useSelector} from 'redux-brief'
 import {actions, AppState, reducers, store} from "./store";
+import {useSelector} from "react-redux";
 
 function App() {
     const money = useSelector((state: AppState) => state.count.money)

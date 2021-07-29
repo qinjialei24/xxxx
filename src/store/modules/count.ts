@@ -1,4 +1,4 @@
-import {createModule} from "redux-brief";
+import {createModule} from "../../redux-brief";
 
 const state = {
     money: 10,
@@ -22,7 +22,7 @@ export const countModule = createModule({
                 state.money -= payload
             },
         },
-     selector:{}
+        selector:{}
         // effects:{
         //    add(reducer){
         //        setTimeout(() => {

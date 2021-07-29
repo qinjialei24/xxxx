@@ -1158,10 +1158,17 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@^7.10.2", "@babel/runtime@^7.11.2", "@babel/runtime@^7.12.1", "@babel/runtime@^7.12.5", "@babel/runtime@^7.5.5", "@babel/runtime@^7.7.2", "@babel/runtime@^7.8.4", "@babel/runtime@^7.9.2":
+"@babel/runtime@^7.10.2", "@babel/runtime@^7.11.2", "@babel/runtime@^7.12.5", "@babel/runtime@^7.5.5", "@babel/runtime@^7.7.2", "@babel/runtime@^7.8.4", "@babel/runtime@^7.9.2":
   version "7.14.0"
   resolved "https://registry.nlark.com/@babel/runtime/download/@babel/runtime-7.14.0.tgz?cache=0&sync_timestamp=1619727550148&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40babel%2Fruntime%2Fdownload%2F%40babel%2Fruntime-7.14.0.tgz#46794bc20b612c5f75e62dd071e24dfd95f1cbe6"
   integrity sha1-RnlLwgthLF915i3QceJN/ZXxy+Y=
+  dependencies:
+    regenerator-runtime "^0.13.4"
+
+"@babel/runtime@^7.12.1":
+  version "7.14.8"
+  resolved "https://registry.npmjs.org/@babel/runtime/-/runtime-7.14.8.tgz#7119a56f421018852694290b9f9148097391b446"
+  integrity sha512-twj3L8Og5SaCRCErB4x4ajbvBIVV77CGeFglHpeg5WC5FF8TZzBWXtTJ4MqaD9QszLYTtr+IsaAL2rEUevb+eg==
   dependencies:
     regenerator-runtime "^0.13.4"
 
@@ -1864,9 +1871,9 @@
     "@types/react" "*"
 
 "@types/react-redux@^7.1.16":
-  version "7.1.16"
-  resolved "https://registry.npmjs.org/@types/react-redux/-/react-redux-7.1.16.tgz#0fbd04c2500c12105494c83d4a3e45c084e3cb21"
-  integrity sha512-f/FKzIrZwZk7YEO9E1yoxIuDNRiDducxkFlkw/GNMGEnK9n4K8wJzlJBghpSuOVDgEUHoDkDF7Gi9lHNQR4siw==
+  version "7.1.18"
+  resolved "https://registry.npmjs.org/@types/react-redux/-/react-redux-7.1.18.tgz#2bf8fd56ebaae679a90ebffe48ff73717c438e04"
+  integrity sha512-9iwAsPyJ9DLTRH+OFeIrm9cAbIj1i2ANL3sKQFATqnPWRbg+jEFXyZOKHiQK/N86pNRXbb4HRxAxo0SIX1XwzQ==
   dependencies:
     "@types/hoist-non-react-statics" "^3.3.0"
     "@types/react" "*"
@@ -9211,15 +9218,6 @@ redent@^3.0.0:
   dependencies:
     indent-string "^4.0.0"
     strip-indent "^3.0.0"
-
-redux-brief@^0.3.23:
-  version "0.3.23"
-  resolved "https://registry.npmjs.org/redux-brief/-/redux-brief-0.3.23.tgz#b46eec30839bc57b357962f2f9aef49eb5984cf2"
-  integrity sha512-3PnauDzXSB3NHUNfSmMvaz43G54HZkBTo9W54HdFkwA/ORmBv4SS3tgxP++TgjE2ggBGR3gqihenh8F3SHOSCQ==
-  dependencies:
-    react-redux "^7.2.4"
-    redux "^4.1.0"
-    redux-devtools-extension "^2.13.9"
 
 redux-devtools-extension@^2.13.9:
   version "2.13.9"
