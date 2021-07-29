@@ -164,12 +164,12 @@ function processRootModule<Reducers>(rootModules: Record<string, any>) {
 
 }
 
-export function mountModules(store: any, processedRootModule: any) {
-    _store = store;
-    Object.keys(processedRootModule).forEach((moduleName) => {
-        _store[moduleName] = processedRootModule[moduleName][REDUCER_KEY];
-    });
-}
+// export function mountModules(store: any, processedRootModule: any) {
+//     _store = store;
+//     Object.keys(processedRootModule).forEach((moduleName) => {
+//         _store[moduleName] = processedRootModule[moduleName][REDUCER_KEY];
+//     });
+// }
 
 export function run<T>(options: RunParams<T>): RunResult<T> {
     const { modules, middlewares = [] } = options;
