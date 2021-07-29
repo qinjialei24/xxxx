@@ -1,4 +1,5 @@
 import {createModule} from "../../redux-brief";
+import {reducers} from "../index";
 
 const state = {
     money: 10,
@@ -22,7 +23,13 @@ export const countModule = createModule({
                 state.money -= payload
             },
         },
-        selector:{}
+        effect:{
+            asyncAdd(payload:any){
+                setTimeout(() => {
+                    reducers.count.add(payload)
+                },1000)
+            }
+        }
         // effects:{
         //    add(reducer){
         //        setTimeout(() => {

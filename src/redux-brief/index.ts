@@ -23,8 +23,8 @@ export function createModule<
     Namespace extends string,
     State extends Record<string, unknown>,
     Reducer extends Record<string, (payload: never, state: State) => void>,
-    Selector extends Record<string, (state: any) => any>
-    >(options: Options<Namespace, State, Reducer, Selector>) {
+    Effect extends any,
+    >(options: Options<Namespace, State, Reducer, Effect>) {
     return options as unknown as Reducer;
 }
 

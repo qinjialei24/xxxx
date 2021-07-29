@@ -45,9 +45,9 @@ export type ReducerModuleConfig = {
     effect: (dispatch: any) => any;
 };
 
-export type Options<Namespace, State, Reducer, Selector> = {
+export type Options<Namespace, State, Reducer,Effect> = {
     readonly namespace: Namespace;
     readonly state: State;
     readonly reducer: Reducer;
-    readonly selector?: Selector;
+    readonly effect?: Effect;
 };
