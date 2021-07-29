@@ -29,14 +29,14 @@ export function createModule<
 }
 
 let _store: any;
-export const _actionMap: Record<string, Record<string, string>> = {};
-export const selectors: any = {};
+const actions: Record<string, Record<string, string>> = {};
+const selectors: any = {};
 
 /*
 generate all actions and save in a map ，so you can use actions like actionMap.count.add,
 it will be added namespace 'count/add' automatically
 
-_actionMap`s shape:
+actions`s shape:
 * count:{
   add: "count/add"
   minus: "count/minus"
@@ -48,8 +48,8 @@ export function generateActionMap(
     actionNameWithNamespace: string
 ) {
     //todo 检查是否重复
-    _actionMap[moduleName] = {
-        ..._actionMap[moduleName],
+    actions[moduleName] = {
+        ...actions[moduleName],
         [actionName]: actionNameWithNamespace,
     };
 }
@@ -79,9 +79,9 @@ function enhanceReducerModule(params: EnhanceReducerModuleParams) {
         : state;
 }
 
-function processModuleReducer(currentModule: ModuleConfig) {
+function processCurrentModuleReducer(currentModule: ModuleConfig) {
     const { reducer, namespace } = currentModule;
-    const reducerModule = (
+    const enhancedReducer = (
         state = currentModule.state,
         action: EnhanceReducerModuleParams['action']
     ) =>
@@ -93,22 +93,23 @@ function processModuleReducer(currentModule: ModuleConfig) {
         });
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    reducerModule[REDUCER_KEY] = getActionMap(reducer, namespace);
-    return reducerModule;
+    enhancedReducer[REDUCER_KEY] = getActionMap(reducer, namespace);
+    console.log("-> reducerModule[REDUCER_KEY]", enhancedReducer[REDUCER_KEY]);
+    return enhancedReducer;
 }
 
 // function getEffectMap() {}
 
-function getActionMap(reducerModule: ModuleConfig, namespace: string) {
-    return Object.keys(reducerModule).reduce((actionMap, actionName) => {
-        const actionNameWithNamespace = namespace + NAME_SPACE_FLAG + actionName;
-        generateActionMap(namespace, actionName, actionNameWithNamespace);
-
+function getActionMap(currentModuleReducer: ModuleConfig, namespace: string) {
+    return Object.keys(currentModuleReducer).reduce((actions, reducerName) => { // actions: 存放所有 action 的对象
+        console.log("-> actions", actions);
+        const reducerNameWithNamespace = namespace + NAME_SPACE_FLAG + reducerName; // like count/add
+        generateActionMap(namespace, reducerName, reducerNameWithNamespace);
         return {
-            ...actionMap,
-            [actionName]: (payload: any) => {
+            ...actions,
+            [reducerName]: (payload: any) => {
                 _store.dispatch({
-                    type: actionNameWithNamespace,
+                    type: reducerNameWithNamespace,
                     payload,
                 });
             },
@@ -118,11 +119,11 @@ function getActionMap(reducerModule: ModuleConfig, namespace: string) {
 
 
 
-//generate all reducers and save in a map ，so you can call reducer like reducers.countModule.add()
-function generateReducers<Reducers>(reducersToCombine: any): HandleReducers<Reducers> {
+//generate all reducers and save in a object ，so you can call reducer like reducers.countModule.add()
+function generateReducers<Reducers>(processedRootModule: any): HandleReducers<Reducers> {
     const reducers: MutableObject = {};
-    Object.keys(reducersToCombine).forEach((moduleName) => {
-        reducers[moduleName] = reducersToCombine[moduleName][REDUCER_KEY];
+    Object.keys(processedRootModule).forEach((moduleName) => {
+        reducers[moduleName] = processedRootModule[moduleName][REDUCER_KEY];
     });
     return reducers as HandleReducers<Reducers>;
 }
@@ -151,7 +152,7 @@ function processRootModule<Reducers>(rootModules: Record<string, any>) {
                 (key) => (selectors[key] = () => moduleSelectors[key](_store.getState()))
             );
         }
-        processedRootModule[moduleName] = processModuleReducer(currentModule);
+        processedRootModule[moduleName] = processCurrentModuleReducer(currentModule);
     });
     const reducers = generateReducers<Reducers>(processedRootModule);
     const rootReducer = combineReducers(processedRootModule);
@@ -182,6 +183,6 @@ export function run<T>(options: RunParams<T>): RunResult<T> {
         selectors,
         reducers,
         effects: {},
-        actions: _actionMap as HandleActionMap<T>,
+        actions: actions as HandleActionMap<T>,
     };
 }
