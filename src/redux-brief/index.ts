@@ -4,10 +4,10 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 
 import {
     HandleActionMap,
-    HandleReducerMap,
+    HandleReducers,
     MutableObject,
     Options,
-    ReducerModuleConfig,
+    ModuleConfig,
     RunParams,
     RunResult,
 } from './types';
@@ -79,10 +79,10 @@ function enhanceReducerModule(params: EnhanceReducerModuleParams) {
         : state;
 }
 
-function createReducerModule(reducerModuleConfig: ReducerModuleConfig) {
-    const { reducer, namespace } = reducerModuleConfig;
+function processModuleReducer(currentModule: ModuleConfig) {
+    const { reducer, namespace } = currentModule;
     const reducerModule = (
-        state = reducerModuleConfig.state,
+        state = currentModule.state,
         action: EnhanceReducerModuleParams['action']
     ) =>
         enhanceReducerModule({
@@ -94,14 +94,12 @@ function createReducerModule(reducerModuleConfig: ReducerModuleConfig) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     reducerModule[REDUCER_KEY] = getActionMap(reducer, namespace);
-    console.log("-> reducerModule[REDUCER_KEY]", reducerModule[REDUCER_KEY]);
-    console.log("-> reducerModule", reducerModule);
     return reducerModule;
 }
 
 // function getEffectMap() {}
 
-function getActionMap(reducerModule: ReducerModuleConfig, namespace: string) {
+function getActionMap(reducerModule: ModuleConfig, namespace: string) {
     return Object.keys(reducerModule).reduce((actionMap, actionName) => {
         const actionNameWithNamespace = namespace + NAME_SPACE_FLAG + actionName;
         generateActionMap(namespace, actionName, actionNameWithNamespace);
@@ -118,54 +116,71 @@ function getActionMap(reducerModule: ReducerModuleConfig, namespace: string) {
     }, {});
 }
 
-export function mountReducerModules(store: any, reducerModules: any) {
+export function mountModules(store: any, reducerModules: any) {
     _store = store;
     Object.keys(reducerModules).forEach((moduleName) => {
         _store[moduleName] = reducerModules[moduleName][REDUCER_KEY];
     });
+    console.log("-> _store", _store);
+
 }
 
-//generate all reducers and save in a map ，so you can call reducer like reducerMap.countModule.add()
-function generateReducerMap<ReducerMap>(reducersToCombine: any): HandleReducerMap<ReducerMap> {
-    const reducerMap: MutableObject = {};
+//generate all reducers and save in a map ，so you can call reducer like reducers.countModule.add()
+function generateReducers<Reducers>(reducersToCombine: any): HandleReducers<Reducers> {
+    const reducers: MutableObject = {};
     Object.keys(reducersToCombine).forEach((moduleName) => {
-        reducerMap[moduleName] = reducersToCombine[moduleName][REDUCER_KEY];
+        reducers[moduleName] = reducersToCombine[moduleName][REDUCER_KEY];
     });
-    return reducerMap as HandleReducerMap<ReducerMap>;
+    return reducers as HandleReducers<Reducers>;
 }
 
-function processRootModules<ReducerMap>(rootModules: Record<string, any>) {
-    const reducersToCombine: MutableObject = {};
+
+// processRootModule shape
+// const processRootModule ={
+//     count:{
+//         reducer: {
+//             add(){}
+//         }
+//     },
+//     todos:{
+//         reducer: {
+//             addTodos(){}
+//         }
+//     },
+// }
+function processRootModule<Reducers>(rootModules: Record<string, any>) {
+    const processedRootModule = {} ;
     Object.keys(rootModules).forEach((moduleName:string) => {
-        // generate selectors
-        const moduleSelectors = rootModules[moduleName].selector;
+        const currentModule = rootModules[moduleName]
+        const moduleSelectors = currentModule.selector;
         if (moduleSelectors) {
             Object.keys(moduleSelectors).forEach(
                 (key) => (selectors[key] = () => moduleSelectors[key](_store.getState()))
             );
         }
-
-        reducersToCombine[moduleName] = createReducerModule(rootModules[moduleName]);
+        processedRootModule[moduleName] = processModuleReducer(currentModule);
     });
-    const reducerMap = generateReducerMap<ReducerMap>(reducersToCombine);
-    const rootReducer = combineReducers(reducersToCombine as any);
+    const reducers = generateReducers<Reducers>(processedRootModule);
+    const rootReducer = combineReducers(processedRootModule);
 
     return {
-        reducerMap,
+        reducers,
         rootReducer,
-        reducersToCombine
+        processedRootModule
     };
+
 }
 
 export function run<T>(options: RunParams<T>): RunResult<T> {
     const { modules, middlewares = [] } = options;
-    const { rootReducer, reducerMap,reducersToCombine } = processRootModules<T>(modules);
+    const { rootReducer, reducers,processedRootModule } = processRootModule<T>(modules);
+    console.log("-> processedRootModule", processedRootModule);
     const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(...middlewares))) as Store; // todo 环境变量,生产环境不打包 dev tools
-    mountReducerModules(store, reducersToCombine);
+    mountModules(store, processedRootModule);
     return {
         store,
         selectors,
-        reducers: reducerMap,
+        reducers,
         effects: {},
         actions: _actionMap as HandleActionMap<T>,
     };
