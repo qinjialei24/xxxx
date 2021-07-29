@@ -134,34 +134,33 @@ function generateReducerMap<ReducerMap>(reducersToCombine: any): HandleReducerMa
     return reducerMap as HandleReducerMap<ReducerMap>;
 }
 
-function processReducerModules<ReducerMap>(reducerModules: any) {
+function processRootModules<ReducerMap>(rootModules: Record<string, any>) {
     const reducersToCombine: MutableObject = {};
-    Object.keys(reducerModules).forEach((reducerName) => {
+    Object.keys(rootModules).forEach((moduleName:string) => {
         // generate selectors
-        const moduleSelectors = reducerModules[reducerName].selector;
+        const moduleSelectors = rootModules[moduleName].selector;
         if (moduleSelectors) {
             Object.keys(moduleSelectors).forEach(
                 (key) => (selectors[key] = () => moduleSelectors[key](_store.getState()))
             );
         }
 
-        reducersToCombine[reducerName] = createReducerModule(reducerModules[reducerName]);
+        reducersToCombine[moduleName] = createReducerModule(rootModules[moduleName]);
     });
     const reducerMap = generateReducerMap<ReducerMap>(reducersToCombine);
+    const rootReducer = combineReducers(reducersToCombine as any);
+
     return {
-        reducersToCombine,
         reducerMap,
+        rootReducer,
+        reducersToCombine
     };
 }
 
 export function run<T>(options: RunParams<T>): RunResult<T> {
     const { modules, middlewares = [] } = options;
-    const { reducersToCombine, reducerMap } = processReducerModules<T>(modules);
-    const rootReducer = combineReducers(reducersToCombine as any);
-    const store = createStore(
-        rootReducer,
-        composeWithDevTools(applyMiddleware(...middlewares))
-    ) as Store; // todo 环境变量,生产环境不打包 dev tools
+    const { rootReducer, reducerMap,reducersToCombine } = processRootModules<T>(modules);
+    const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(...middlewares))) as Store; // todo 环境变量,生产环境不打包 dev tools
     mountReducerModules(store, reducersToCombine);
     return {
         store,
