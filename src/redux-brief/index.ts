@@ -93,16 +93,14 @@ function processCurrentModuleReducer(currentModule: ModuleConfig) {
         });
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    enhancedReducer[REDUCER_KEY] = getActionMap(reducer, namespace);
+    enhancedReducer[REDUCER_KEY] = processReducerWithStoreDispatch(reducer, namespace);
     console.log("-> reducerModule[REDUCER_KEY]", enhancedReducer[REDUCER_KEY]);
     return enhancedReducer;
 }
 
-// function getEffectMap() {}
-
-function getActionMap(currentModuleReducer: ModuleConfig, namespace: string) {
+// 处理 reducer，使之可以 将 reducer.count.add() 代理成 _store.dispatch('count/add')
+function processReducerWithStoreDispatch(currentModuleReducer: ModuleConfig, namespace: string) {
     return Object.keys(currentModuleReducer).reduce((actions, reducerName) => { // actions: 存放所有 action 的对象
-        console.log("-> actions", actions);
         const reducerNameWithNamespace = namespace + NAME_SPACE_FLAG + reducerName; // like count/add
         generateActionMap(namespace, reducerName, reducerNameWithNamespace);
         return {
