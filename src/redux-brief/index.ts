@@ -13,11 +13,9 @@ import {
 } from './types';
 
 export const NAME_SPACE_FLAG = '/';
-export const REDUCER_KEY = 'reducer';
 
 export const getKey = (str: string): string =>
     str.substring(str.indexOf(NAME_SPACE_FLAG) + 1, str.length + 1);
-
 
 export function createModule<
     Namespace extends string,
@@ -31,6 +29,7 @@ export function createModule<
 let _store: any;
 const actions: Record<string, Record<string, string>> = {};
 const selectors: any = {};
+const reducers:MutableObject ={}
 
 /*
 generate all actions and save in a map ，so you can use actions like actionMap.count.add,
@@ -93,17 +92,17 @@ function processCurrentModuleReducer(currentModule: ModuleConfig) {
         });
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    enhancedReducer[REDUCER_KEY] = processReducerWithStoreDispatch(reducer, namespace);
-    console.log("-> reducerModule[REDUCER_KEY]", enhancedReducer[REDUCER_KEY]);
+    reducers[namespace]=generateReducersWithStoreDispatch(reducer, namespace);
     return enhancedReducer;
 }
 
-// 处理 reducer，使之可以 将 reducer.count.add() 代理成 _store.dispatch('count/add')
-function processReducerWithStoreDispatch(currentModuleReducer: ModuleConfig, namespace: string) {
+//返回 reducers，使用户可以这样使用：reducer.count.add()
+// 内部将会自动代理成 _store.dispatch('count/add')
+function generateReducersWithStoreDispatch(currentModuleReducer: ModuleConfig, namespace: string) {
     return Object.keys(currentModuleReducer).reduce((actions, reducerName) => { // actions: 存放所有 action 的对象
         const reducerNameWithNamespace = namespace + NAME_SPACE_FLAG + reducerName; // like count/add
         generateActionMap(namespace, reducerName, reducerNameWithNamespace);
-        return {
+        const reducerWithStoreDispatch ={
             ...actions,
             [reducerName]: (payload: any) => {
                 _store.dispatch({
@@ -112,20 +111,10 @@ function processReducerWithStoreDispatch(currentModuleReducer: ModuleConfig, nam
                 });
             },
         };
+        console.log("-> reducers", reducers);
+        return reducerWithStoreDispatch
     }, {});
 }
-
-
-
-//generate all reducers and save in a object ，so you can call reducer like reducers.countModule.add()
-function generateReducers<Reducers>(processedRootModule: any): HandleReducers<Reducers> {
-    const reducers: MutableObject = {};
-    Object.keys(processedRootModule).forEach((moduleName) => {
-        reducers[moduleName] = processedRootModule[moduleName][REDUCER_KEY];
-    });
-    return reducers as HandleReducers<Reducers>;
-}
-
 
 // processRootModule shape
 // const processRootModule ={
@@ -140,7 +129,7 @@ function generateReducers<Reducers>(processedRootModule: any): HandleReducers<Re
 //         }
 //     },
 // }
-function processRootModule<Reducers>(rootModules: Record<string, any>) {
+function processRootModule(rootModules: Record<string, any>) {
     const processedRootModule = {} ;
     Object.keys(rootModules).forEach((moduleName:string) => {
         const currentModule = rootModules[moduleName]
@@ -152,35 +141,25 @@ function processRootModule<Reducers>(rootModules: Record<string, any>) {
         }
         processedRootModule[moduleName] = processCurrentModuleReducer(currentModule);
     });
-    const reducers = generateReducers<Reducers>(processedRootModule);
     const rootReducer = combineReducers(processedRootModule);
 
     return {
-        reducers,
         rootReducer,
-        // processedRootModule
     };
 
 }
 
-// export function mountModules(store: any, processedRootModule: any) {
-//     _store = store;
-//     Object.keys(processedRootModule).forEach((moduleName) => {
-//         _store[moduleName] = processedRootModule[moduleName][REDUCER_KEY];
-//     });
-// }
-
-export function run<T>(options: RunParams<T>): RunResult<T> {
+export function run<Reducers>(options: RunParams<Reducers>): RunResult<Reducers> {
     const { modules, middlewares = [] } = options;
-    const { rootReducer, reducers } = processRootModule<T>(modules);
+    const { rootReducer } = processRootModule(modules);
     const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(...middlewares))) as Store; // todo 环境变量,生产环境不打包 dev tools
     _store = store;
-    // mountModules(store, processedRootModule);
+
     return {
         store,
         selectors,
-        reducers,
+        reducers:reducers as HandleReducers<Reducers>,
         effects: {},
-        actions: actions as HandleActionMap<T>,
+        actions: actions as HandleActionMap<Reducers>,
     };
 }
