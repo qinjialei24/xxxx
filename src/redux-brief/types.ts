@@ -42,7 +42,7 @@ export type ModuleConfig = {
     namespace: string;
     state: unknown;
     reducer: Record<string, unknown>;
-    effect: (dispatch: any) => any;
+    effect: Record<string, unknown>;
 };
 
 export type Options<Namespace, State, Reducer,Effect> = {

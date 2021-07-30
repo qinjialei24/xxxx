@@ -17,6 +17,11 @@ export const NAME_SPACE_FLAG = '/';
 export const getKey = (str: string): string =>
     str.substring(str.indexOf(NAME_SPACE_FLAG) + 1, str.length + 1);
 
+interface CreateModuleResult<Reducer,Effect> {
+    reducer:Reducer
+    effect:Effect
+}
+
 export function createModule<
     Namespace extends string,
     State extends Record<string, unknown>,
@@ -27,12 +32,17 @@ export function createModule<
 }
 
 let _store: any;
-const actions: Record<string, Record<string, string>> = {};
+const _actions: Record<string, Record<string, string>> = {};
 const selectors: any = {};
 const reducers:MutableObject ={}
+const _effects ={}
+const _reducersToCombine = {} ;
+let _rootReducers:any = {} ;
+
 
 /*
-generate all actions and save in a map ，so you can use actions like actionMap.count.add,
+generate all actions and save in a object ，
+so you can use actions like actions.count.add,
 it will be added namespace 'count/add' automatically
 
 actions`s shape:
@@ -41,19 +51,19 @@ actions`s shape:
   minus: "count/minus"
 * }
 * */
-export function generateActionMap(
+export function generateActions(
     moduleName: string,
     actionName: string,
     actionNameWithNamespace: string
 ) {
     //todo 检查是否重复
-    actions[moduleName] = {
-        ...actions[moduleName],
+    _actions[moduleName] = {
+        ..._actions[moduleName],
         [actionName]: actionNameWithNamespace,
     };
 }
 
-type EnhanceReducerModuleParams = {
+type EnhanceModuleReducerParams = {
     namespace: string;
     state: unknown;
     action: { type: string; payload: unknown };
@@ -65,12 +75,12 @@ type EnhanceReducerModuleParams = {
  * 1. add namespace
  * 2. add immer
  * */
-function enhanceReducerModule(params: EnhanceReducerModuleParams) {
+function enhanceModuleReducer(params: EnhanceModuleReducerParams) {
     const { state, action, reducer, namespace = '' } = params;
     return Object.keys(reducer)
         .map((key) => namespace + NAME_SPACE_FLAG + key)
         .includes(action.type)
-        ? produce(state, (draft: EnhanceReducerModuleParams['state']) => {
+        ? produce(state, (draft: EnhanceModuleReducerParams['state']) => {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             return reducer[getKey(action.type)](action.payload, draft);
@@ -78,19 +88,23 @@ function enhanceReducerModule(params: EnhanceReducerModuleParams) {
         : state;
 }
 
-function processCurrentModuleReducer(currentModule: ModuleConfig) {
+
+
+function processModuleReducer(currentModule: ModuleConfig) {
     const { reducer:currentModuleReducer, namespace } = currentModule;
     const enhancedReducer = (
         state = currentModule.state,
-        action: EnhanceReducerModuleParams['action']
+        action: EnhanceModuleReducerParams['action']
     ) =>
-        enhanceReducerModule({
+        enhanceModuleReducer({
             state,
             action,
             reducer:currentModuleReducer,
             namespace,
         });
     reducers[namespace]=generateReducersWithStoreDispatch(currentModuleReducer, namespace);
+    _reducersToCombine[namespace] = enhancedReducer
+    _rootReducers = combineReducers(_reducersToCombine)
     return enhancedReducer;
 }
 
@@ -99,7 +113,7 @@ function processCurrentModuleReducer(currentModule: ModuleConfig) {
 function generateReducersWithStoreDispatch(currentModuleReducer: ModuleConfig['reducer'], namespace: string) {
     return Object.keys(currentModuleReducer).reduce((actions, reducerName) => { // actions: 存放所有 action 的对象
         const reducerNameWithNamespace = namespace + NAME_SPACE_FLAG + reducerName; // like count/add
-        generateActionMap(namespace, reducerName, reducerNameWithNamespace);
+        generateActions(namespace, reducerName, reducerNameWithNamespace);
         const reducerWithStoreDispatch ={
             ...actions,
             [reducerName]: (payload: any) => {
@@ -114,50 +128,40 @@ function generateReducersWithStoreDispatch(currentModuleReducer: ModuleConfig['r
     }, {});
 }
 
-// processRootModule shape
-// const processRootModule ={
-//     count:{
-//         reducer: {
-//             add(){}
-//         }
-//     },
-//     todos:{
-//         reducer: {
-//             addTodos(){}
-//         }
-//     },
+// function processModuleSelector(currentModule: ModuleConfig) {
+//     const moduleSelectors = currentModule.selector;
+//     if (moduleSelectors) {
+//         Object.keys(moduleSelectors).forEach(
+//             (key) => (selectors[key] = () => moduleSelectors[key](_store.getState()))
+//         );
+//     }
 // }
-function processRootModule(rootModules: Record<string, any>) {
-    const processedRootModule = {} ;
-    Object.keys(rootModules).forEach((moduleName:string) => {
-        const currentModule = rootModules[moduleName]
-        const moduleSelectors = currentModule.selector;
-        if (moduleSelectors) {
-            Object.keys(moduleSelectors).forEach(
-                (key) => (selectors[key] = () => moduleSelectors[key](_store.getState()))
-            );
-        }
-        processedRootModule[moduleName] = processCurrentModuleReducer(currentModule);
+
+function processModuleEffect(currentModule: ModuleConfig) {
+    const { effect:currentModuleEffect, namespace } = currentModule;
+
+}
+
+function processRootModule(rootModule: Record<string, any>) {
+    Object.keys(rootModule).forEach((namespace:string) => {
+        const currentModule = rootModule[namespace]
+        processModuleReducer(currentModule);
+        processModuleEffect(currentModule);
+        // processModuleSelector(currentModule)
     });
-    const rootReducer = combineReducers(processedRootModule);
-
-    return {
-        rootReducer,
-    };
-
 }
 
 export function run<Reducers>(options: RunParams<Reducers>): RunResult<Reducers> {
     const { modules, middlewares = [] } = options;
-    const { rootReducer } = processRootModule(modules);
-    const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(...middlewares))) as Store; // todo 环境变量,生产环境不打包 dev tools
+    processRootModule(modules);
+    const store = createStore(_rootReducers, composeWithDevTools(applyMiddleware(...middlewares))) as Store; // todo 环境变量,生产环境不打包 dev tools
     _store = store;
 
     return {
         store,
         selectors,
         reducers:reducers as HandleReducers<Reducers>,
-        effects: {},
-        actions: actions as HandleActionMap<Reducers>,
+        effects: _effects,
+        actions: _actions as HandleActionMap<Reducers>,
     };
 }

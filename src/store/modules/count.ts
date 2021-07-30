@@ -12,7 +12,7 @@ const namespace = 'count'
 export const countModule = createModule({
         namespace,
         state,
-        reducer: {
+        reducer: { //
             add(payload: number, state) {
                 state.money += payload
             },
@@ -23,13 +23,6 @@ export const countModule = createModule({
                 state.money -= payload
             },
         },
-        effect:{
-            asyncAdd(payload:any){
-                setTimeout(() => {
-                    reducers.count.add(payload)
-                },1000)
-            }
-        }
         // effects:{
         //    add(reducer){
         //        setTimeout(() => {
@@ -42,5 +35,18 @@ export const countModule = createModule({
 
 export type CountModuleState ={
     [namespace]: typeof state
+}
+
+function login() {
+    return Promise.resolve({name:'admin'})
+}
+
+export const effects ={
+   async asyncAdd(payload:number){
+       const data =await login()
+        setTimeout(() => {
+            reducers.user.setUserName(data.name)
+        },1000)
+    }
 }
 
