@@ -1,7 +1,6 @@
 import React from 'react';
-import {actions, AppState, reducers, store} from "./store";
+import {actions, AppState, effects, reducers, store} from "./store";
 import {useSelector} from "react-redux";
-import {effects} from "./store/modules/count";
 
 function App() {
     const money = useSelector((state: AppState) => state.count.money)
@@ -22,8 +21,8 @@ function App() {
         return (
             <div style={{border:'1px solid',padding:'10px'}}>
                 <button onClick={() => {
-                    effects.asyncAdd(10)
-                    // reducers.count.add(1)
+                    // effects.asyncAdd(10)
+                    reducers.count.add(2)
                     // reducers.user.setUserName('kobe bryant')
                     // reducers.user.setInfo({age:1,address:''})
                 }}>
@@ -31,9 +30,9 @@ function App() {
                 </button>
                 <h1>money:{money}</h1>
                 <button onClick={() => {
-                    store.dispatch(minusAsync() as any)
+                   effects.count.asyncAdd(10)
                 }}>
-                    异步减
+                    异步➕
                 </button>
                 <h1>name:{name}</h1>
             </div>

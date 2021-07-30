@@ -23,13 +23,13 @@ export const countModule = createModule({
                 state.money -= payload
             },
         },
-        // effects:{
-        //    add(reducer){
-        //        setTimeout(() => {
-        //            reducer.add(1)
-        //        },1000)
-        //    }
-        // }
+        effect:{
+           asyncAdd(payload:number){
+               setTimeout(() => {
+                   reducers.count.add(payload)
+               },1000)
+           }
+        }
     }
 )
 
@@ -41,12 +41,12 @@ function login() {
     return Promise.resolve({name:'admin'})
 }
 
-export const effects ={
-   async asyncAdd(payload:number){
-       const data =await login()
-        setTimeout(() => {
-            reducers.user.setUserName(data.name)
-        },1000)
-    }
-}
+// export const effects ={
+//    async asyncAdd(payload:number){
+//        const data =await login()
+//         setTimeout(() => {
+//             reducers.user.setUserName(data.name)
+//         },1000)
+//     }
+// }
 

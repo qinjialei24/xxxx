@@ -28,7 +28,7 @@ export function createModule<
     Reducer extends Record<string, (payload: never, state: State) => void>,
     Effect extends any,
     >(options: Options<Namespace, State, Reducer, Effect>) {
-    return options as unknown as Reducer;
+    return options as unknown as CreateModuleResult<Reducer,Effect> ;
 }
 
 let _store: any;
@@ -139,7 +139,7 @@ function generateReducersWithStoreDispatch(currentModuleReducer: ModuleConfig['r
 
 function processModuleEffect(currentModule: ModuleConfig) {
     const { effect:currentModuleEffect, namespace } = currentModule;
-
+    _effects[namespace] =currentModuleEffect
 }
 
 function processRootModule(rootModule: Record<string, any>) {
@@ -151,7 +151,7 @@ function processRootModule(rootModule: Record<string, any>) {
     });
 }
 
-export function run<Reducers>(options: RunParams<Reducers>): RunResult<Reducers> {
+export function run<Reducers,Effects>(options: RunParams<Reducers>): RunResult<Reducers,Effects> {
     const { modules, middlewares = [] } = options;
     processRootModule(modules);
     const store = createStore(_rootReducers, composeWithDevTools(applyMiddleware(...middlewares))) as Store; // todo 环境变量,生产环境不打包 dev tools
@@ -161,7 +161,7 @@ export function run<Reducers>(options: RunParams<Reducers>): RunResult<Reducers>
         store,
         selectors,
         reducers:reducers as HandleReducers<Reducers>,
-        effects: _effects,
+        effects: _effects as HandleReducers<Effects>,
         actions: _actions as HandleActionMap<Reducers>,
     };
 }

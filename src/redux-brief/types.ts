@@ -24,16 +24,12 @@ export type RunParams<ReducerModules> = {
     readonly middlewares?: readonly any[];
 };
 
-export type RunResult<ReducerModules> = {
+export type RunResult<ReducerModules,Effects> = {
     readonly store: Store;
     readonly actions: HandleActionMap<ReducerModules>;
     readonly reducers: HandleReducers<ReducerModules>;
     readonly selectors: Record<string, unknown>;
-    readonly effects: Record<string, unknown>;
-};
-
-export type RunFunc<T> = {
-    (options: RunParams<T>): RunResult<T>;
+    readonly effects: HandleReducers<Effects>;
 };
 
 export type MutableObject = Record<string, unknown>;
