@@ -79,7 +79,7 @@ function enhanceReducerModule(params: EnhanceReducerModuleParams) {
 }
 
 function processCurrentModuleReducer(currentModule: ModuleConfig) {
-    const { reducer, namespace } = currentModule;
+    const { reducer:currentModuleReducer, namespace } = currentModule;
     const enhancedReducer = (
         state = currentModule.state,
         action: EnhanceReducerModuleParams['action']
@@ -87,18 +87,16 @@ function processCurrentModuleReducer(currentModule: ModuleConfig) {
         enhanceReducerModule({
             state,
             action,
-            reducer,
+            reducer:currentModuleReducer,
             namespace,
         });
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    reducers[namespace]=generateReducersWithStoreDispatch(reducer, namespace);
+    reducers[namespace]=generateReducersWithStoreDispatch(currentModuleReducer, namespace);
     return enhancedReducer;
 }
 
 //返回 reducers，使用户可以这样使用：reducer.count.add()
-// 内部将会自动代理成 _store.dispatch('count/add')
-function generateReducersWithStoreDispatch(currentModuleReducer: ModuleConfig, namespace: string) {
+//内部将会自动代理成 _store.dispatch('count/add')
+function generateReducersWithStoreDispatch(currentModuleReducer: ModuleConfig['reducer'], namespace: string) {
     return Object.keys(currentModuleReducer).reduce((actions, reducerName) => { // actions: 存放所有 action 的对象
         const reducerNameWithNamespace = namespace + NAME_SPACE_FLAG + reducerName; // like count/add
         generateActionMap(namespace, reducerName, reducerNameWithNamespace);
